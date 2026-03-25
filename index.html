@@ -2,992 +2,634 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>เช็คลิสต์เสบียงฉุกเฉิน</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0c0d10;
-    --surface: #151720;
-    --card: #1a1e28;
-    --card-hover: #1f2332;
-    --card-border: #262a36;
-    --text: #eae8e4;
-    --text-secondary: #9498a4;
-    --text-dim: #6b6f7b;
-    --check-green: #22c55e;
-    --done-bg: rgba(34,197,94,0.06);
-    --done-border: rgba(34,197,94,0.15);
-    --round1: #ef4444;
-    --round2: #f97316;
-    --round3: #eab308;
-    --round4: #22c55e;
-    --round5: #3b82f6;
-    --round6: #a855f7;
-    --max-w: 680px;
-    --radius: 16px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Noto Sans Thai', -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 80px;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ==================== LAYOUT WRAPPER ==================== */
-  .container {
-    max-width: var(--max-w);
-    margin: 0 auto;
-  }
-
-  /* ==================== HEADER ==================== */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--card-border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-inner {
-    max-width: var(--max-w);
-    margin: 0 auto;
-    padding: 18px 20px 14px;
-  }
-
-  .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-
-  .header-icon {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ef4444, #f97316);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    box-shadow: 0 4px 16px rgba(239,68,68,0.3);
-    flex-shrink: 0;
-  }
-
-  .header-title h1 {
-    font-size: 19px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-    color: #fff;
-  }
-
-  .header-title p {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 1px;
-  }
-
-  .header-stats {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 10px;
-  }
-
-  .stat-chip {
-    font-size: 11px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .progress-track {
-    background: rgba(255,255,255,0.06);
-    border-radius: 6px;
-    height: 6px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    border-radius: 6px;
-    background: linear-gradient(90deg, #ef4444, #f97316, #22c55e);
-    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    position: relative;
-  }
-
-  .progress-fill::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 20px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
-    border-radius: 0 6px 6px 0;
-  }
-
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
-  .progress-label .pct {
-    color: var(--check-green);
-    font-weight: 700;
-  }
-
-  /* ==================== ROUND NAV ==================== */
-  .round-nav-wrap {
-    background: var(--surface);
-    border-bottom: 1px solid var(--card-border);
-    position: sticky;
-    top: 0;
-    z-index: 99;
-  }
-
-  .round-nav {
-    max-width: var(--max-w);
-    margin: 0 auto;
-    display: flex;
-    gap: 6px;
-    padding: 10px 20px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    justify-content: flex-start;
-  }
-
-  .round-nav::-webkit-scrollbar { display: none; }
-
-  @media (min-width: 720px) {
-    .round-nav { justify-content: center; }
-  }
-
-  .round-tab {
-    flex-shrink: 0;
-    padding: 7px 16px;
-    border-radius: 99px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1.5px solid var(--card-border);
-    background: transparent;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all 0.25s ease;
-    white-space: nowrap;
-    position: relative;
-  }
-
-  .round-tab:hover {
-    border-color: rgba(255,255,255,0.15);
-    color: var(--text-secondary);
-    background: rgba(255,255,255,0.03);
-  }
-
-  .round-tab.active {
-    color: #fff;
-    border-color: transparent;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-  }
-
-  .round-tab[data-round="1"].active { background: var(--round1); box-shadow: 0 2px 12px rgba(239,68,68,0.35); }
-  .round-tab[data-round="2"].active { background: var(--round2); box-shadow: 0 2px 12px rgba(249,115,22,0.35); }
-  .round-tab[data-round="3"].active { background: var(--round3); color: #1a1d24; box-shadow: 0 2px 12px rgba(234,179,8,0.35); }
-  .round-tab[data-round="4"].active { background: var(--round4); box-shadow: 0 2px 12px rgba(34,197,94,0.35); }
-  .round-tab[data-round="5"].active { background: var(--round5); box-shadow: 0 2px 12px rgba(59,130,246,0.35); }
-  .round-tab[data-round="6"].active { background: var(--round6); box-shadow: 0 2px 12px rgba(168,85,247,0.35); }
-  .round-tab[data-round="all"].active { background: linear-gradient(135deg, var(--round1), var(--round5)); }
-
-  .tab-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    border-radius: 99px;
-    background: rgba(255,255,255,0.2);
-    font-size: 10px;
-    font-weight: 700;
-    margin-left: 5px;
-    vertical-align: middle;
-  }
-
-  /* ==================== ALERT ==================== */
-  .alert-box {
-    max-width: var(--max-w);
-    margin: 16px auto 0;
-    padding: 14px 18px;
-    border-radius: var(--radius);
-    border: 1px solid rgba(239,68,68,0.2);
-    background: rgba(239,68,68,0.06);
-    font-size: 12.5px;
-    line-height: 1.7;
-    color: var(--text-secondary);
-  }
-
-  .alert-box strong {
-    color: #ef4444;
-    font-weight: 700;
-  }
-
-  /* ==================== ROUND SECTION ==================== */
-  .round-section {
-    margin-top: 16px;
-    animation: fadeUp 0.3s ease;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .round-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px 18px 12px;
-    border-radius: var(--radius) var(--radius) 0 0;
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-bottom: none;
-  }
-
-  .round-number {
-    width: 40px; height: 40px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 17px; font-weight: 900;
-    color: #fff;
-    flex-shrink: 0;
-  }
-
-  .round-info { flex: 1; }
-  .round-info h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
-  .round-info p { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-
-  .round-progress {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-dim);
-    background: rgba(255,255,255,0.05);
-    padding: 4px 10px;
-    border-radius: 99px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .round-progress.complete {
-    background: rgba(34,197,94,0.15);
-    color: var(--check-green);
-  }
-
-  .round-1 .round-header { background: linear-gradient(135deg, rgba(239,68,68,0.1), var(--card) 70%); }
-  .round-1 .round-number { background: var(--round1); }
-  .round-2 .round-header { background: linear-gradient(135deg, rgba(249,115,22,0.1), var(--card) 70%); }
-  .round-2 .round-number { background: var(--round2); }
-  .round-3 .round-header { background: linear-gradient(135deg, rgba(234,179,8,0.08), var(--card) 70%); }
-  .round-3 .round-number { background: var(--round3); color: #1a1d24; }
-  .round-4 .round-header { background: linear-gradient(135deg, rgba(34,197,94,0.08), var(--card) 70%); }
-  .round-4 .round-number { background: var(--round4); }
-  .round-5 .round-header { background: linear-gradient(135deg, rgba(59,130,246,0.08), var(--card) 70%); }
-  .round-5 .round-number { background: var(--round5); }
-  .round-6 .round-header { background: linear-gradient(135deg, rgba(168,85,247,0.08), var(--card) 70%); }
-  .round-6 .round-number { background: var(--round6); }
-
-  /* ==================== ITEM LIST ==================== */
-  .item-list {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-top: none;
-    border-radius: 0 0 var(--radius) var(--radius);
-    overflow: hidden;
-  }
-
-  .category-label {
-    padding: 10px 18px 5px;
-    font-size: 10.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-dim);
-    border-top: 1px solid rgba(255,255,255,0.04);
-  }
-
-  .category-label:first-child { border-top: none; }
-
-  .item {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 13px 18px;
-    border-bottom: 1px solid rgba(255,255,255,0.035);
-    cursor: pointer;
-    transition: background 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-  }
-
-  .item:last-child { border-bottom: none; }
-
-  @media (hover: hover) {
-    .item:hover {
-      background: var(--card-hover);
-    }
-  }
-
-  .item:active { background: rgba(255,255,255,0.04); }
-
-  /* Checked state */
-  .item.checked {
-    background: var(--done-bg);
-  }
-
-  .item.checked .item-name {
-    text-decoration: line-through;
-    text-decoration-color: var(--text-dim);
-    color: var(--text-dim);
-  }
-
-  .item.checked .item-qty { color: var(--text-dim); }
-  .item.checked .item-reason { opacity: 0.4; }
-  .item.checked .item-tag { opacity: 0.4; }
-
-  /* Checkbox */
-  .checkbox {
-    width: 26px; height: 26px;
-    border-radius: 8px;
-    border: 2px solid #3a3e4a;
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    margin-top: 1px;
-  }
-
-  @media (hover: hover) {
-    .item:hover .checkbox {
-      border-color: #555;
-    }
-  }
-
-  .item.checked .checkbox {
-    background: var(--check-green);
-    border-color: var(--check-green);
-    transform: scale(1);
-    animation: checkPop 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  @keyframes checkPop {
-    0% { transform: scale(0.8); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-  }
-
-  .checkbox svg {
-    width: 14px; height: 14px;
-    stroke: #fff; stroke-width: 3;
-    fill: none; stroke-linecap: round; stroke-linejoin: round;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .item.checked .checkbox svg { opacity: 1; }
-
-  /* Item content */
-  .item-content { flex: 1; min-width: 0; }
-
-  .item-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 10px;
-  }
-
-  .item-name {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.4;
-    transition: color 0.2s;
-  }
-
-  .item-qty {
-    font-size: 12.5px;
-    font-weight: 700;
-    color: #f97316;
-    white-space: nowrap;
-    flex-shrink: 0;
-    background: rgba(249,115,22,0.1);
-    padding: 2px 8px;
-    border-radius: 6px;
-  }
-
-  .item.checked .item-qty {
-    background: rgba(255,255,255,0.04);
-  }
-
-  .item-reason {
-    font-size: 11.5px;
-    color: var(--text-dim);
-    margin-top: 3px;
-    line-height: 1.55;
-    transition: opacity 0.2s;
-  }
-
-  .item-tag {
-    display: inline-block;
-    font-size: 9.5px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 5px;
-    margin-top: 5px;
-    transition: opacity 0.2s;
-  }
-
-  .tag-critical { background: rgba(239,68,68,0.15); color: #ef4444; }
-  .tag-important { background: rgba(249,115,22,0.15); color: #f97316; }
-  .tag-tip { background: rgba(59,130,246,0.15); color: #3b82f6; }
-
-  /* ==================== FOOTER ==================== */
-  .summary-footer {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 100;
-    background: rgba(12,13,16,0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid var(--card-border);
-  }
-
-  .footer-inner {
-    max-width: var(--max-w);
-    margin: 0 auto;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-left {
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .footer-left .count-highlight {
-    color: var(--check-green);
-    font-weight: 800;
-  }
-
-  .footer-actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .btn-ghost {
-    padding: 7px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--card-border);
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: 11.5px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-ghost:hover {
-    border-color: rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.04);
-    color: var(--text);
-  }
-
-  /* ==================== RESPONSIVE ==================== */
-  @media (min-width: 720px) {
-    .alert-box { margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }
-    .round-section { }
-    .item { padding: 14px 20px; }
-    .category-label { padding-left: 20px; }
-  }
-
-  @media (max-width: 400px) {
-    .header-inner { padding: 14px 14px 12px; }
-    .round-nav { padding: 8px 14px; }
-    .item { padding: 11px 14px; gap: 10px; }
-    .item-name { font-size: 13px; }
-    .item-qty { font-size: 11.5px; }
-    .category-label { padding-left: 14px; }
-    .round-header { padding: 14px 14px 10px; }
-  }
-
-  .hidden { display: none !important; }
-
-  /* Scroll to top */
-  .scroll-top {
-    position: fixed;
-    bottom: 70px;
-    right: 16px;
-    width: 40px; height: 40px;
-    border-radius: 12px;
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    color: var(--text-secondary);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s;
-    z-index: 99;
-    font-size: 18px;
-  }
-
-  .scroll-top.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .scroll-top:hover {
-    background: var(--card-hover);
-    border-color: rgba(255,255,255,0.15);
-  }
-
-  /* Print */
-  @media print {
-    .header, .round-nav-wrap { position: static; }
-    .summary-footer, .scroll-top { display: none; }
-    body { background: #fff; color: #000; padding: 0; }
-    .round-section { break-inside: avoid; }
-    .item-list { border: 1px solid #ddd; }
-    .container { max-width: 100%; }
-  }
+:root {
+  --bg: #f4f1ec;
+  --surface: #ffffff;
+  --surface-hover: #faf8f5;
+  --border: #e2ddd5;
+  --border-light: #ece8e1;
+  --text: #1a1814;
+  --text-secondary: #5c564d;
+  --text-dim: #8a847a;
+  --accent: #c0440f;
+  --green: #1a7f3f;
+  --green-bg: #eef7f0;
+  --orange: #b45309;
+  --orange-bg: #fef3e2;
+  --blue: #1d5fa0;
+  --blue-bg: #edf4fc;
+  --red: #b91c1c;
+  --red-bg: #fef2f2;
+  --round1: #c0440f;
+  --round2: #b45309;
+  --round3: #856d0e;
+  --round4: #1a7f3f;
+  --round5: #1d5fa0;
+  --round6: #7c3aad;
+  --max-w: 640px;
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; padding-bottom: 76px;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px; line-height: 1.5;
+}
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 12px; }
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.header-inner {
+  max-width: var(--max-w); margin: 0 auto; padding: 16px 16px 12px;
+}
+.header-brand {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.header-icon {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #e05a2b);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(192,68,15,0.25);
+}
+.header-title h1 {
+  font-family: 'Noto Sans Thai', sans-serif;
+  font-size: 18px; font-weight: 900; color: var(--text); letter-spacing: -0.3px;
+}
+.header-subtitle { font-size: 12px; color: var(--text-dim); margin-top: 1px; }
+.header-budget {
+  display: inline-block;
+  font-size: 11px; font-weight: 700;
+  color: var(--orange);
+  background: var(--orange-bg);
+  padding: 2px 8px; border-radius: 6px;
+  margin-top: 4px;
+}
+.progress-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.progress-track {
+  flex: 1; background: var(--border-light); border-radius: 6px; height: 7px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--orange), var(--green));
+  transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.progress-pct { font-size: 13px; font-weight: 700; color: var(--green); min-width: 36px; text-align: right; }
+.progress-detail { font-size: 11px; color: var(--text-dim); margin-top: 3px; }
+
+/* ===== NAV ===== */
+.nav-wrap {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 99;
+}
+.round-nav {
+  max-width: var(--max-w); margin: 0 auto;
+  display: flex; gap: 5px; padding: 8px 12px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.round-nav::-webkit-scrollbar { display: none; }
+@media (min-width: 700px) { .round-nav { justify-content: center; } }
+.round-tab {
+  flex-shrink: 0; padding: 6px 14px; border-radius: 99px;
+  font-size: 12px; font-weight: 600;
+  border: 1.5px solid var(--border); background: var(--surface);
+  color: var(--text-dim); cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.round-tab:hover { border-color: #ccc; color: var(--text-secondary); }
+.round-tab.active { color: #fff; border-color: transparent; }
+.round-tab[data-round="1"].active { background: var(--round1); }
+.round-tab[data-round="2"].active { background: var(--round2); }
+.round-tab[data-round="3"].active { background: var(--round3); }
+.round-tab[data-round="4"].active { background: var(--round4); }
+.round-tab[data-round="5"].active { background: var(--round5); }
+.round-tab[data-round="6"].active { background: var(--round6); }
+.round-tab[data-round="all"].active { background: var(--text); }
+
+/* ===== ALERT ===== */
+.alert {
+  margin: 12px 0 0; padding: 12px 14px; border-radius: var(--radius-sm);
+  border: 1px solid #f5c6c6; background: var(--red-bg);
+  font-size: 12.5px; line-height: 1.65; color: #6b2020;
+}
+.alert strong { color: var(--red); }
+
+/* ===== ROUND ===== */
+.round-section { margin-top: 16px; }
+.round-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.round-num {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Sans Thai', sans-serif;
+  font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0;
+}
+.round-info { flex: 1; }
+.round-info h2 { font-size: 15px; font-weight: 700; }
+.round-info p { font-size: 11.5px; color: var(--text-dim); margin-top: 1px; }
+.round-badge {
+  font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 99px;
+  background: var(--border-light); color: var(--text-dim); white-space: nowrap;
+}
+.round-badge.done { background: var(--green-bg); color: var(--green); }
+.round-budget {
+  display: flex; align-items: center; gap: 6px; padding: 8px 16px;
+  background: var(--orange-bg);
+  border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+  font-size: 12px; color: var(--orange); font-weight: 600;
+}
+
+/* ===== STORE ===== */
+.store-group {
+  background: var(--surface);
+  border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+}
+.store-group:last-child {
+  border-bottom: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius); overflow: hidden;
+}
+.store-label {
+  padding: 10px 16px 5px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-dim);
+  background: var(--surface-hover); border-top: 1px solid var(--border-light);
+}
+
+/* ===== ITEM ===== */
+.item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-top: 1px solid var(--border-light);
+  cursor: pointer; transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent; user-select: none; min-height: 52px;
+}
+@media (hover:hover) { .item:hover { background: var(--surface-hover); } }
+.item:active { background: #f0ece5; }
+.item.checked { background: var(--green-bg); }
+.item.checked .item-name { text-decoration: line-through; color: var(--text-dim); }
+.item.checked .item-qty { opacity: 0.4; }
+.item.checked .item-reason { opacity: 0.35; }
+.item.checked .item-tag { opacity: 0.35; }
+
+.cb-wrap {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin: -8px -6px -8px -8px;
+}
+.checkbox {
+  width: 24px; height: 24px; border-radius: 7px;
+  border: 2.5px solid #c5bfb6;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; background: #fff;
+}
+.item.checked .checkbox {
+  background: var(--green); border-color: var(--green);
+  animation: pop 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+@keyframes pop { 0%{transform:scale(.8)} 50%{transform:scale(1.15)} 100%{transform:scale(1)} }
+.checkbox svg {
+  width: 14px; height: 14px; stroke: #fff; stroke-width: 3;
+  fill: none; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0; transition: opacity .15s;
+}
+.item.checked .checkbox svg { opacity: 1; }
+
+.item-body { flex: 1; min-width: 0; }
+.item-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.item-name { font-size: 14px; font-weight: 600; line-height: 1.4; }
+.item-qty {
+  font-size: 11.5px; font-weight: 700; color: var(--orange);
+  background: var(--orange-bg); padding: 2px 8px; border-radius: 6px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.item-reason { font-size: 12px; color: var(--text-dim); margin-top: 2px; line-height: 1.5; transition: opacity 0.2s; }
+.item-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-top: 4px; }
+.tag-critical { background: #fee2e2; color: #b91c1c; }
+.tag-important { background: #fef3e2; color: #b45309; }
+.tag-tip { background: #edf4fc; color: #1d5fa0; }
+
+.item-memo-btn {
+  display: inline-block; font-size: 10px; color: var(--text-dim);
+  margin-top: 4px; margin-left: 4px; cursor: pointer; opacity: 0.6; transition: opacity 0.2s;
+}
+.item-memo-btn:hover { opacity: 1; }
+.item-memo { margin-top: 5px; display: none; }
+.item-memo.open { display: block; }
+.item-memo input {
+  width: 100%; padding: 5px 8px; border: 1px solid var(--border);
+  border-radius: 6px; font-family: inherit; font-size: 12px;
+  background: var(--surface-hover); color: var(--text); outline: none;
+}
+.item-memo input:focus { border-color: var(--blue); }
+
+/* ===== FOOTER ===== */
+.footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border); z-index: 100;
+}
+.footer-inner {
+  max-width: var(--max-w); margin: 0 auto; padding: 10px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-left { font-size: 13px; font-weight: 600; }
+.footer-left .hl { color: var(--green); font-weight: 800; }
+.footer-actions { display: flex; gap: 6px; }
+.btn {
+  padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
+  font-family: inherit; cursor: pointer; border: none; transition: all 0.2s;
+}
+.btn-share { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(192,68,15,0.2); }
+.btn-share:hover { background: #a83a0d; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+.btn-ghost:hover { border-color: #bbb; color: var(--text-secondary); }
+.btn-top {
+  background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+  padding: 8px 10px; font-size: 14px; line-height: 1;
+}
+.btn-top:hover { border-color: #bbb; color: var(--text-secondary); }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: 90px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text); color: #fff;
+  padding: 10px 20px; border-radius: 12px;
+  font-size: 13px; font-weight: 600;
+  opacity: 0; transition: all 0.3s; z-index: 200;
+  pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.hidden { display: none !important; }
+
+/* ===== PRINT ===== */
+@media print {
+  body { background: #fff; padding: 0; font-size: 11pt; }
+  .header, .nav-wrap, .footer, .toast, .btn, .item-memo-btn, .alert { display: none !important; }
+  .container { max-width: 100%; padding: 0 10mm; }
+  .round-section { break-inside: avoid; margin-top: 8mm; }
+  .round-header { background: #f5f5f5 !important; border: 1px solid #ddd; }
+  .store-group { border: 1px solid #ddd; border-top: none; }
+  .item { border-top: 1px solid #eee; padding: 4mm 5mm; min-height: auto; }
+  .checkbox { border: 2px solid #999; }
+  .item.checked .checkbox { background: #333; border-color: #333; }
+  .cb-wrap { width: 30px; height: 30px; margin: 0; }
+  .item-qty { border: 1px solid #ddd; background: #f9f9f9; }
+  .round-budget { background: #fef9ef; }
+  @page { margin: 12mm 10mm; size: A4; }
+  .print-header { display: block !important; text-align: center; padding: 5mm 0 8mm; border-bottom: 2px solid #333; margin-bottom: 5mm; }
+  .print-header h1 { font-size: 18pt; }
+  .print-header p { font-size: 10pt; color: #666; }
+}
+.print-header { display: none; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<div class="print-header"><h1>🛒 เช็คลิสต์เสบียงฉุกเฉิน</h1><p>4 คน × 30 วัน · 6 รอบช็อปปิ้ง</p></div>
+
 <div class="header">
   <div class="header-inner">
     <div class="header-brand">
       <div class="header-icon">🛒</div>
-      <div class="header-title">
-        <h1>เช็คลิสต์เสบียงฉุกเฉิน</h1>
-        <p>4 คน × 30 วัน · 6 รอบช็อปปิ้ง · <span id="dateLabel"></span></p>
+      <div>
+        <h1 class="header-title">เช็คลิสต์เสบียงฉุกเฉิน</h1>
+        <div class="header-subtitle">4 คน × 30 วัน · 6 รอบ · <span id="dateLabel"></span></div>
+        <div class="header-budget" id="totalBudget">💰 งบรวมทุกรอบ: ≈ 11,000-19,000 ฿</div>
       </div>
     </div>
-    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    <div class="progress-label">
-      <span id="progressText">0 / 0 รายการ</span>
-      <span class="pct" id="progressPct">0%</span>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-pct" id="progressPct">0%</div>
     </div>
+    <div class="progress-detail" id="progressDetail">0 / 0 รายการ</div>
   </div>
 </div>
 
-<!-- ROUND NAV -->
-<div class="round-nav-wrap">
-  <div class="round-nav" id="roundNav">
+<div class="nav-wrap">
+  <div class="round-nav">
     <div class="round-tab active" data-round="all" onclick="filterRound('all')">ทั้งหมด</div>
-    <div class="round-tab" data-round="1" onclick="filterRound('1')">🔴 รอบ 1</div>
-    <div class="round-tab" data-round="2" onclick="filterRound('2')">🟠 รอบ 2</div>
-    <div class="round-tab" data-round="3" onclick="filterRound('3')">🟡 รอบ 3</div>
-    <div class="round-tab" data-round="4" onclick="filterRound('4')">🟢 รอบ 4</div>
-    <div class="round-tab" data-round="5" onclick="filterRound('5')">🔵 รอบ 5</div>
-    <div class="round-tab" data-round="6" onclick="filterRound('6')">🟣 รอบ 6</div>
+    <div class="round-tab" data-round="1" onclick="filterRound('1')">รอบ 1</div>
+    <div class="round-tab" data-round="2" onclick="filterRound('2')">รอบ 2</div>
+    <div class="round-tab" data-round="3" onclick="filterRound('3')">รอบ 3</div>
+    <div class="round-tab" data-round="4" onclick="filterRound('4')">รอบ 4</div>
+    <div class="round-tab" data-round="5" onclick="filterRound('5')">รอบ 5</div>
+    <div class="round-tab" data-round="6" onclick="filterRound('6')">รอบ 6</div>
   </div>
 </div>
 
-<!-- ALERT -->
 <div class="container">
-  <div class="alert-box">
-    <strong>⚠️ สถานการณ์ ณ มี.ค. 2569:</strong> ช่องแคบฮอร์มุซถูกปิดกั้น น้ำมันโลกขึ้น 25%+ · ปั๊มในไทย 10% ปิดบริการ · ราคาสินค้าขึ้น 3-5% แล้ว — <strong>ยิ่งซื้อเร็วยิ่งได้ราคาถูก</strong>
+  <div class="alert">
+    <strong>⚠️ สถานการณ์ มี.ค. 2569:</strong> ช่องแคบฮอร์มุซถูกปิดกั้น · น้ำมันโลก +25% · ปั๊มในไทย 10% ปิดบริการ · ราคาสินค้าขึ้น 3-5% — <strong>ยิ่งซื้อเร็วยิ่งได้ราคาถูก</strong>
   </div>
+  <div id="content"></div>
 </div>
 
-<!-- CONTENT -->
-<div class="container" id="content"></div>
+<div class="toast" id="toast"></div>
 
-<!-- SCROLL TOP -->
-<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
-
-<!-- FOOTER -->
-<div class="summary-footer">
+<div class="footer">
   <div class="footer-inner">
-    <div class="footer-left">
-      ✅ <span class="count-highlight" id="checkedCount">0</span> / <span id="totalCount">0</span> รายการ
-    </div>
+    <div class="footer-left">✅ <span class="hl" id="fCount">0</span> / <span id="fTotal">0</span></div>
     <div class="footer-actions">
-      <button class="btn-ghost" onclick="resetAll()">🔄 รีเซ็ต</button>
+      <button class="btn btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="กลับขึ้นบน">↑</button>
+      <button class="btn btn-ghost" onclick="resetAll()">รีเซ็ต</button>
+      <button class="btn btn-share" onclick="shareState()">📤 แชร์</button>
     </div>
   </div>
 </div>
 
 <script>
+// ==================== DATA ====================
+// tag priority for sorting: critical=0, important=1, tip=3, none=2
+const TAG_ORDER = { critical: 0, important: 1, undefined: 2, tip: 3 };
+
 const ROUNDS = [
   {
-    round: 1,
-    title: "ทำทันทีวันนี้",
-    subtitle: "รักษาชีวิต + สภาพคล่อง",
-    categories: [
-      {
-        label: "💊 ยาและการแพทย์",
-        items: [
-          { name: "ยาโรคประจำตัว", qty: "สำรอง 60 วัน", reason: "ห้ามขาดเด็ดขาด ถ้าป่วยจะเสียทรัพยากรทั้งหมดไปกับการรักษา", tag: "critical" },
-          { name: "ยาปฏิชีวนะ (Amoxicillin)", qty: "2 กล่อง", reason: "สุขอนามัยจะแย่ลง การติดเชื้อคือภัยหลัก", tag: "critical" },
-          { name: "ยาแก้ท้องเสียอย่างแรง", qty: "2 กล่อง", reason: "ท้องเสียทำให้ร่างกายทรุดเร็วมากในภาวะวิกฤต", tag: "critical" },
-          { name: "ผงเกลือแร่ ORS", qty: "20 ซอง", reason: "ป้องกันขาดน้ำจากท้องเสียหรือเหงื่อออกมาก", tag: "important" },
-        ]
-      },
-      {
-        label: "💵 เงินสดและพลังงาน",
-        items: [
-          { name: "เงินสดแบงก์ย่อย (20/50/100)", qty: "10,000-20,000 ฿", reason: "ATM/แอปอาจใช้ไม่ได้ แบงก์ย่อยไม่ต้องรอทอน", tag: "critical" },
-          { name: "แก๊สกระป๋องพกพา + หัวเตา", qty: "6 กระป๋อง", reason: "ถ้าไม่มีไฟ อาหารแห้งก็แค่ขยะ — ชุดนี้พร้อมใช้ทันที", tag: "critical" },
-        ]
-      },
-      {
-        label: "💧 น้ำดื่ม",
-        items: [
-          { name: "น้ำดื่มขวด", qty: "4×12 แพ็ค (1.5L)", reason: "ถ้าไฟดับ ประปาหยุด — ต้องมีน้ำอย่างน้อย 3 ลิตร/คน/วัน", tag: "critical" },
-          { name: "ถังเก็บน้ำมีฝาปิด", qty: "1 ถัง (200L)", reason: "สำรองน้ำอาบ/ซัก เติมน้ำประปาไว้ก่อนขาด", tag: "important" },
-        ]
-      }
+    round: 1, title: "ทำทันทีวันนี้", subtitle: "รักษาชีวิต + สภาพคล่อง", budget: "≈ 3,000-5,000 ฿",
+    stores: [
+      { store: "🏥 ร้านยา", items: [
+        { name: "ยาโรคประจำตัว", qty: "สำรอง 60 วัน", reason: "ห้ามขาดเด็ดขาด ป่วยเมื่อไหร่จะสูญเสียทุกอย่าง", tag: "critical" },
+        { name: "ยาปฏิชีวนะ (Amoxicillin)", qty: "2 กล่อง", reason: "สุขอนามัยจะแย่ลง การติดเชื้อคือภัยหลัก", tag: "critical" },
+        { name: "ยาแก้ท้องเสียอย่างแรง", qty: "2 กล่อง", reason: "ท้องเสียทำร่างกายทรุดเร็วมากในวิกฤต", tag: "critical" },
+        { name: "ผงเกลือแร่ ORS", qty: "20 ซอง", reason: "ป้องกันขาดน้ำจากท้องเสียหรือเหงื่อออกมาก", tag: "important" },
+      ]},
+      { store: "🏦 ธนาคาร / ATM", items: [
+        { name: "เงินสดแบงก์ย่อย (20/50/100)", qty: "10,000-20,000 ฿", reason: "ATM/แอปอาจล่ม แบงก์ย่อยไม่ต้องรอทอน", tag: "critical" },
+      ]},
+      { store: "🏪 ร้านสะดวกซื้อ / โลตัส", items: [
+        { name: "น้ำดื่มขวด 1.5 ลิตร", qty: "48 ขวด (4 แพ็ค)", reason: "ประปาอาจหยุด — ต้องมี 3 ลิตร/คน/วัน", tag: "critical" },
+        { name: "แก๊สกระป๋อง + หัวเตา", qty: "6 กระป๋อง", reason: "ไม่มีไฟ = อาหารแห้งก็แค่ขยะ", tag: "critical" },
+      ]},
+      { store: "🛒 ตลาด / ร้านวัสดุ", items: [
+        { name: "ถังเก็บน้ำมีฝาปิด", qty: "1 ถัง (200L)", reason: "สำรองน้ำอาบ/ซัก เติมประปาไว้ก่อนขาด", tag: "important" },
+      ]},
     ]
   },
   {
-    round: 2,
-    title: "ภายใน 2-3 วัน",
-    subtitle: "อาหาร \"สุกไว\" + โปรตีนที่ไม่เน่า",
-    categories: [
-      {
-        label: "🍜 อาหารสุกไว (ประหยัดแก๊ส)",
-        items: [
-          { name: "เส้นหมี่ขาวแห้ง", qty: "5 กก.", reason: "แช่น้ำ + ลวกแป๊บเดียว ประหยัดแก๊สกว่าหุงข้าวมาก", tag: "important" },
-          { name: "วุ้นเส้นแห้ง", qty: "3 กก.", reason: "แช่น้ำอุ่นก็สุก กินกับน้ำซุปได้ทันที", tag: "important" },
-          { name: "บะหมี่กึ่งสำเร็จรูป", qty: "3 ลัง (90 ซอง)", reason: "สำรองยามฉุกเฉินจริงๆ ไม่ควรเป็นอาหารหลัก" },
-        ]
-      },
-      {
-        label: "🐟 โปรตีนแห้ง",
-        items: [
-          { name: "ปลาแห้ง / ปลาเค็ม", qty: "3 กก.", reason: "โปรตีนสูง รสเข้ม เก็บได้นานไม่ต้องแช่เย็น", tag: "important" },
-          { name: "กุ้งแห้ง", qty: "1 กก.", reason: "ใช้ทำน้ำซุป เพิ่มรสชาติให้อาหารจืดๆ" },
-          { name: "ปลาหมึกแห้ง", qty: "1 กก.", reason: "ย่างกินได้เลย โปรตีนสูง" },
-        ]
-      },
-      {
-        label: "🥫 อาหารกระป๋อง",
-        items: [
-          { name: "ปลากระป๋อง (ซาร์ดีน/แมคเคอเรล)", qty: "20 กระป๋อง", reason: "เปิดทานได้ทันที — โปรตีน+ไขมัน", tag: "important" },
-          { name: "เนื้อกระป๋อง / ไก่กระป๋อง", qty: "10 กระป๋อง", reason: "สลับรสชาติเพื่อไม่ให้เบื่อ" },
-          { name: "ผลไม้กระป๋อง", qty: "6 กระป๋อง", reason: "วิตามินและน้ำตาลให้พลังงาน" },
-        ]
-      },
-      {
-        label: "🧂 เครื่องปรุงรส",
-        items: [
-          { name: "เกลือ", qty: "2 กก.", reason: "ปรุงรส + ถนอมอาหาร + ล้างแผล", tag: "important" },
-          { name: "น้ำตาลทราย", qty: "3 กก.", reason: "ให้พลังงาน + ถนอมอาหาร + ผสมเกลือแร่" },
-          { name: "น้ำปลา / ซีอิ๊ว", qty: "3 ขวด", reason: "รสชาติหลักของอาหารไทย" },
-          { name: "ผงชูรส", qty: "2 ถุง", reason: "ทำอาหารจืดให้กินได้ — สำคัญทางจิตใจ" },
-          { name: "น้ำมันพืช", qty: "3 ขวด (1L)", reason: "ไขมันจำเป็นต่อร่างกาย + ใช้ทอด/ผัด ภาวะขาดแคลนจะหายากมาก", tag: "important" },
-        ]
-      }
+    round: 2, title: "ภายใน 2-3 วัน", subtitle: "อาหารสุกไว + โปรตีนแห้ง", budget: "≈ 2,500-4,000 ฿",
+    stores: [
+      { store: "🛒 ตลาดสด / ตลาดเช้า", items: [
+        { name: "ปลาแห้ง / ปลาเค็ม", qty: "3 กก.", reason: "โปรตีนสูง เก็บนานไม่ต้องแช่เย็น", tag: "important" },
+        { name: "กุ้งแห้ง", qty: "1 กก.", reason: "ทำน้ำซุป เพิ่มรสชาติให้อาหารจืดๆ" },
+        { name: "ปลาหมึกแห้ง", qty: "1 กก.", reason: "ย่างกินได้เลย โปรตีนสูง" },
+        { name: "พริกแห้ง", qty: "500 กรัม", reason: "เพิ่มรสชาติ + ช่วยย่อย" },
+        { name: "กระเทียม", qty: "1 กก.", reason: "ปรุงรส + ฆ่าเชื้อ เก็บนานในที่แห้ง" },
+        { name: "หอมแดง", qty: "1 กก.", reason: "ทำน้ำพริก น้ำจิ้ม เพิ่มรสให้อาหารแห้ง" },
+      ]},
+      { store: "🏪 โลตัส / แม็คโคร", items: [
+        { name: "เส้นหมี่ขาวแห้ง", qty: "5 กก.", reason: "แช่น้ำ + ลวกแป๊บเดียว ประหยัดแก๊สกว่าหุงข้าว", tag: "important" },
+        { name: "วุ้นเส้นแห้ง", qty: "3 กก.", reason: "แช่น้ำอุ่นก็สุก กินกับซุปได้ทันที", tag: "important" },
+        { name: "น้ำมันพืช", qty: "3 ขวด (1L)", reason: "ไขมันจำเป็น + ทอด/ผัด ขาดแคลนจะหายากมาก", tag: "important" },
+        { name: "เกลือ", qty: "2 กก.", reason: "ปรุงรส + ถนอมอาหาร + ล้างแผล", tag: "important" },
+        { name: "ปลากระป๋อง", qty: "20 กระป๋อง", reason: "เปิดทานได้ทันที โปรตีน+ไขมัน", tag: "important" },
+        { name: "บะหมี่กึ่งสำเร็จรูป", qty: "3 ลัง (90 ซอง)", reason: "สำรองฉุกเฉินจริงๆ ไม่ใช่อาหารหลัก" },
+        { name: "เนื้อ/ไก่กระป๋อง", qty: "10 กระป๋อง", reason: "สลับรสชาติเพื่อไม่ให้เบื่อ" },
+        { name: "ผลไม้กระป๋อง", qty: "6 กระป๋อง", reason: "วิตามินและน้ำตาลให้พลังงาน" },
+        { name: "น้ำตาลทราย", qty: "3 กก.", reason: "พลังงาน + ถนอมอาหาร + ผสมเกลือแร่" },
+        { name: "น้ำปลา / ซีอิ๊ว", qty: "3 ขวด", reason: "รสชาติหลักของอาหารไทย" },
+        { name: "ผงชูรส", qty: "2 ถุง", reason: "ทำอาหารจืดให้กินได้ สำคัญทางจิตใจ" },
+      ]},
     ]
   },
   {
-    round: 3,
-    title: "ภายในสัปดาห์นี้",
-    subtitle: "เสบียงหลัก + แหล่งพลังงานสำรอง",
-    categories: [
-      {
-        label: "🍚 ธัญพืชหลัก",
-        items: [
-          { name: "ข้าวสาร (สูญญากาศ)", qty: "20 กก.", reason: "แหล่งพลังงานหลัก ข้าวสูญญากาศเก็บได้ 1-2 ปี", tag: "important" },
-          { name: "ถั่วเขียว", qty: "2 กก.", reason: "กินได้ + เพาะเป็นถั่วงอก = ผักสดในภาวะวิกฤต", tag: "tip" },
-          { name: "ถั่วเหลือง / ถั่วแดง", qty: "รวม 2 กก.", reason: "โปรตีนราคาถูกที่สุดที่เก็บได้นาน" },
-        ]
-      },
-      {
-        label: "🔥 พลังงานสำรอง",
-        items: [
-          { name: "เตาถ่าน + ถ่านไม้", qty: "1 เตา + 20 กก.", reason: "แก๊สกระป๋องหมดเร็ว ถ่านคือพลังงานหลักถ้าวิกฤตยาว", tag: "important" },
-          { name: "แก๊สกระป๋อง (เพิ่ม)", qty: "12 กระป๋อง", reason: "เติมสต็อกให้รวมเป็น 18 กระป๋อง ≈ 36-54 ชม." },
-          { name: "ไฟแช็ก / ไม้ขีดไฟ", qty: "10 อัน / 5 กล่อง", reason: "จุดไฟได้คือทุกอย่าง กระจายเก็บหลายจุด" },
-        ]
-      },
-      {
-        label: "🌶️ เครื่องเทศ / สมุนไพร",
-        items: [
-          { name: "พริกแห้ง", qty: "500 กรัม", reason: "เพิ่มรสชาติ + สรรพคุณช่วยย่อย" },
-          { name: "กระเทียม", qty: "1 กก.", reason: "ปรุงรส + ฆ่าเชื้อ + เก็บได้นานในที่แห้ง" },
-          { name: "หอมแดง", qty: "1 กก.", reason: "ทำน้ำพริก น้ำจิ้ม เพิ่มรสชาติให้อาหารแห้ง" },
-        ]
-      }
+    round: 3, title: "ภายในสัปดาห์นี้", subtitle: "เสบียงหลัก + พลังงานสำรอง", budget: "≈ 2,000-3,500 ฿",
+    stores: [
+      { store: "🏪 โลตัส / แม็คโคร", items: [
+        { name: "ข้าวสาร", qty: "20 กก.", reason: "พลังงานหลัก — ถุงสูญญากาศเก็บ 1-2 ปี / ถุงธรรมดาเก็บได้ 3-6 เดือน (ที่แห้ง ไม่โดนแดด)", tag: "important" },
+        { name: "ถั่วเขียว", qty: "2 กก.", reason: "กินได้ + เพาะเป็นถั่วงอก = ผักสดในวิกฤต · ไม่ต้องสูญญากาศ ถุงธรรมดาเก็บ 6-12 เดือน เก็บที่แห้ง", tag: "tip" },
+        { name: "ถั่วเหลือง / ถั่วแดง", qty: "รวม 2 กก.", reason: "โปรตีนราคาถูกเก็บนาน · ถุงธรรมดาเก็บ 6-12 เดือน ใส่กล่องปิดสนิทกันมอด" },
+        { name: "แก๊สกระป๋อง (เพิ่ม)", qty: "12 กระป๋อง", reason: "เติมสต็อกรวมเป็น 18 กระป๋อง ≈ 36-54 ชม." },
+      ]},
+      { store: "🛒 ตลาด / ร้านวัสดุ", items: [
+        { name: "เตาถ่าน + ถ่านไม้", qty: "1 เตา + 20 กก.", reason: "แก๊สกระป๋องหมดเร็ว ถ่านคือพลังงานหลักถ้าวิกฤตยาว", tag: "important" },
+        { name: "ไฟแช็ก / ไม้ขีดไฟ", qty: "10 อัน / 5 กล่อง", reason: "จุดไฟได้คือทุกอย่าง กระจายเก็บหลายจุด" },
+      ]},
     ]
   },
   {
-    round: 4,
-    title: "สัปดาห์หน้า",
-    subtitle: "ไฟฟ้า + แสงสว่าง + การสื่อสาร",
-    categories: [
-      {
-        label: "🔦 แสงสว่างและพลังงาน",
-        items: [
-          { name: "ไฟฉาย LED + ถ่าน AA/AAA สำรอง", qty: "2 อัน + 20 ก้อน", reason: "ความสว่าง = ความปลอดภัยตอนกลางคืน", tag: "important" },
-          { name: "เทียน + เชิงเทียน", qty: "20 เล่ม", reason: "แสงสว่างสำรองที่ไม่ต้องใช้ถ่าน" },
-          { name: "แผ่นโซลาร์เซลล์พกพา (10-20W)", qty: "1 แผ่น", reason: "แหล่งพลังงานฟรี — ชาร์จมือถือ/ไฟฉาย/วิทยุ", tag: "tip" },
-          { name: "พาวเวอร์แบงก์ 20,000 mAh+", qty: "2 ก้อน", reason: "ชาร์จเต็มไว้ก่อน ใช้คู่กับโซลาร์" },
-        ]
-      },
-      {
-        label: "📻 การสื่อสาร",
-        items: [
-          { name: "วิทยุ FM/AM ใส่ถ่าน", qty: "1 เครื่อง", reason: "เมื่ออินเทอร์เน็ตล่ม วิทยุคือช่องทางเดียวที่ฟังข่าวได้", tag: "important" },
-        ]
-      }
+    round: 4, title: "สัปดาห์หน้า", subtitle: "แสงสว่าง + การสื่อสาร", budget: "≈ 1,500-3,000 ฿",
+    stores: [
+      { store: "🏪 ร้านไฟฟ้า / Shopee / Lazada", items: [
+        { name: "ไฟฉาย LED + ถ่าน AA/AAA", qty: "2 อัน + 20 ก้อน", reason: "ความสว่าง = ความปลอดภัยตอนกลางคืน", tag: "important" },
+        { name: "วิทยุ FM/AM ใส่ถ่าน", qty: "1 เครื่อง", reason: "เน็ตล่ม วิทยุคือช่องทางเดียวที่ฟังข่าวได้", tag: "important" },
+        { name: "พาวเวอร์แบงก์ 20,000 mAh+", qty: "2 ก้อน", reason: "ชาร์จเต็มไว้ก่อน ใช้คู่กับโซลาร์" },
+        { name: "แผ่นโซลาร์เซลล์พกพา (10-20W)", qty: "1 แผ่น", reason: "พลังงานฟรี — ชาร์จมือถือ/ไฟฉาย/วิทยุ", tag: "tip" },
+        { name: "เทียน + เชิงเทียน", qty: "20 เล่ม", reason: "แสงสว่างสำรองที่ไม่ต้องใช้ถ่าน" },
+      ]},
     ]
   },
   {
-    round: 5,
-    title: "ภายใน 2 สัปดาห์",
-    subtitle: "สุขอนามัย + ป้องกันโรคระบาด",
-    categories: [
-      {
-        label: "🧼 สุขอนามัย",
-        items: [
-          { name: "สบู่ก้อน", qty: "10 ก้อน", reason: "ป้องกันเชื้อโรค ใช้ได้ทั้งอาบและซัก" },
-          { name: "ผงซักฟอก", qty: "3 กก.", reason: "เสื้อผ้าสะอาดลดการติดเชื้อทางผิวหนัง" },
-          { name: "กระดาษชำระ", qty: "12 ม้วน", reason: "สุขอนามัยพื้นฐาน" },
-          { name: "แอลกอฮอล์ 70%", qty: "2 ลิตร", reason: "ฆ่าเชื้อมือ/แผล/พื้นผิว" },
-          { name: "ผ้าอนามัย (ถ้าจำเป็น)", qty: "สำรอง 3 เดือน", reason: "จะหาซื้อได้ยากมากในภาวะขาดแคลน" },
-        ]
-      },
-      {
-        label: "🏥 ชุดปฐมพยาบาล",
-        items: [
-          { name: "พลาสเตอร์ + ผ้าก๊อซ + เทปพันแผล", qty: "1 ชุด", reason: "อุบัติเหตุเล็กๆ ที่ไม่อยากไปโรงพยาบาล" },
-          { name: "ยาแก้ปวด/ลดไข้ (พาราเซตามอล)", qty: "100 เม็ด", reason: "ยาพื้นฐานที่ใช้บ่อยที่สุด" },
-          { name: "วิตามินรวม", qty: "120 เม็ด", reason: "ชดเชยสารอาหารที่ขาดจากอาหารแห้ง (1 เดือน × 4 คน)" },
-          { name: "ยาทาแผลเบตาดีน", qty: "2 ขวด", reason: "ฆ่าเชื้อแผลเปิด" },
-        ]
-      },
-      {
-        label: "🪣 จัดการของเสีย",
-        items: [
-          { name: "ถุงขยะสีดำหนา", qty: "3 แพ็ค", reason: "จัดการของเสียเป็นระเบียบ ป้องกันหนู/แมลง" },
-          { name: "ปูนขาว", qty: "5 กก.", reason: "โรยฆ่าเชื้อ + ดับกลิ่น ในห้องน้ำ/ถังขยะ" },
-          { name: "สารส้ม", qty: "1 กก.", reason: "ทำน้ำสะอาดจากน้ำขุ่น (ตกตะกอน)" },
-        ]
-      }
+    round: 5, title: "ภายใน 2 สัปดาห์", subtitle: "สุขอนามัย + ปฐมพยาบาล", budget: "≈ 1,500-2,500 ฿",
+    stores: [
+      { store: "🏥 ร้านยา", items: [
+        { name: "พลาสเตอร์ + ผ้าก๊อซ + เทปพันแผล", qty: "1 ชุด", reason: "อุบัติเหตุเล็กๆ ที่ไม่อยากไปโรงพยาบาล" },
+        { name: "ยาแก้ปวด (พาราเซตามอล)", qty: "100 เม็ด", reason: "ยาพื้นฐานที่ใช้บ่อยที่สุด" },
+        { name: "วิตามินรวม", qty: "120 เม็ด", reason: "ชดเชยสารอาหารจากอาหารแห้ง (1 เดือน × 4 คน)" },
+        { name: "ยาทาแผลเบตาดีน", qty: "2 ขวด", reason: "ฆ่าเชื้อแผลเปิด" },
+        { name: "แอลกอฮอล์ 70%", qty: "2 ลิตร", reason: "ฆ่าเชื้อมือ/แผล/พื้นผิว" },
+      ]},
+      { store: "🏪 โลตัส / ร้านสะดวกซื้อ", items: [
+        { name: "สบู่ก้อน", qty: "10 ก้อน", reason: "ป้องกันเชื้อโรค ใช้ทั้งอาบและซัก" },
+        { name: "ผงซักฟอก", qty: "3 กก.", reason: "เสื้อผ้าสะอาดลดการติดเชื้อผิวหนัง" },
+        { name: "กระดาษชำระ", qty: "12 ม้วน", reason: "สุขอนามัยพื้นฐาน" },
+        { name: "ผ้าอนามัย (ถ้าจำเป็น)", qty: "สำรอง 3 เดือน", reason: "หาซื้อได้ยากมากในภาวะขาดแคลน" },
+        { name: "ถุงขยะสีดำหนา", qty: "3 แพ็ค", reason: "จัดการของเสีย ป้องกันหนู/แมลง" },
+      ]},
+      { store: "🛒 ร้านวัสดุก่อสร้าง", items: [
+        { name: "ปูนขาว", qty: "5 กก.", reason: "โรยฆ่าเชื้อ + ดับกลิ่น ห้องน้ำ/ถังขยะ" },
+        { name: "สารส้ม", qty: "1 กก.", reason: "ทำน้ำสะอาดจากน้ำขุ่น (ตกตะกอน)" },
+      ]},
     ]
   },
   {
-    round: 6,
-    title: "เมื่อพร้อม",
-    subtitle: "ซ่อมบำรุง + เอกสาร + เสริมกำลังใจ",
-    categories: [
-      {
-        label: "🔧 ซ่อมบำรุง",
-        items: [
-          { name: "เทปกาวอเนกประสงค์ (Duct Tape)", qty: "3 ม้วน", reason: "ซ่อมได้ทุกอย่าง — ท่อ, หลังคา, รองเท้า, ถุง" },
-          { name: "เข็มกับด้าย + กรรไกร", qty: "1 ชุด", reason: "ซ่อมเสื้อผ้า/กระเป๋า เพราะจะซื้อใหม่ไม่ได้" },
-          { name: "เชือกไนลอน", qty: "20 เมตร", reason: "ตากผ้า ผูกยึด ขนของ" },
-        ]
-      },
-      {
-        label: "📄 เอกสารสำคัญ",
-        items: [
-          { name: "สำเนาบัตรประชาชน / ทะเบียนบ้าน", qty: "อย่างละ 5 ชุด", reason: "พิสูจน์ตัวตนเพื่อรับสิทธิ์ช่วยเหลือ ใส่ซองกันน้ำ", tag: "important" },
-          { name: "สมุดบัญชี / เอกสารการเงิน (สำเนา)", qty: "1 ชุด", reason: "สำรองไว้กรณี digital ใช้ไม่ได้" },
-        ]
-      },
-      {
-        label: "💪 เสริมกำลังใจ",
-        items: [
-          { name: "ขนมแห้ง / ช็อคโกแลต / กาแฟซอง", qty: "ตามชอบ", reason: "ขวัญกำลังใจสำคัญไม่แพ้อาหาร", tag: "tip" },
-          { name: "ไพ่ / เกมกระดาน / หนังสือ", qty: "1-2 ชุด", reason: "คลายเครียดเมื่อไม่มีไฟฟ้า/อินเทอร์เน็ต" },
-        ]
-      }
+    round: 6, title: "เมื่อพร้อม", subtitle: "ซ่อมบำรุง + เอกสาร + กำลังใจ", budget: "≈ 500-1,000 ฿",
+    stores: [
+      { store: "🛒 ร้านวัสดุ / ตลาดนัด", items: [
+        { name: "เทปกาวอเนกประสงค์ (Duct Tape)", qty: "3 ม้วน", reason: "ซ่อมได้ทุกอย่าง — ท่อ, หลังคา, รองเท้า" },
+        { name: "เข็ม + ด้าย + กรรไกร", qty: "1 ชุด", reason: "ซ่อมเสื้อผ้า/กระเป๋า ซื้อใหม่ไม่ได้" },
+        { name: "เชือกไนลอน", qty: "20 เมตร", reason: "ตากผ้า ผูกยึด ขนของ" },
+      ]},
+      { store: "📄 ทำที่บ้าน", items: [
+        { name: "สำเนาบัตร ปชช. / ทะเบียนบ้าน", qty: "อย่างละ 5 ชุด", reason: "พิสูจน์ตัวตนรับสิทธิ์ช่วยเหลือ ใส่ซองกันน้ำ", tag: "important" },
+        { name: "สำเนาสมุดบัญชี / เอกสารการเงิน", qty: "1 ชุด", reason: "สำรองไว้กรณี digital ใช้ไม่ได้" },
+      ]},
+      { store: "🏪 ร้านสะดวกซื้อ", items: [
+        { name: "ขนมแห้ง / ช็อคโกแลต / กาแฟซอง", qty: "ตามชอบ", reason: "กำลังใจสำคัญไม่แพ้อาหาร", tag: "tip" },
+        { name: "ไพ่ / เกมกระดาน / หนังสือ", qty: "1-2 ชุด", reason: "คลายเครียดเมื่อไม่มีไฟฟ้า/เน็ต" },
+      ]},
     ]
   }
 ];
 
-// ==================== STATE ====================
-let checkedItems = {};
-const STORAGE_KEY = 'emergency-checklist-v2';
-
-function loadState() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) checkedItems = JSON.parse(saved);
-  } catch(e) {}
-}
-
-function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedItems));
-  } catch(e) {}
-}
-
-function getItemId(ri, ci, ii) { return `r${ri}-c${ci}-i${ii}`; }
-
-function toggleItem(id) {
-  checkedItems[id] = !checkedItems[id];
-  saveState();
-  const el = document.querySelector(`[data-id="${id}"]`);
-  if (el) {
-    if (checkedItems[id]) {
-      el.classList.add('checked');
-    } else {
-      el.classList.remove('checked');
-    }
-  }
-  updateProgress();
-  updateRoundProgress();
-  updateTabBadges();
-}
-
-function getTotalItems() {
-  let t = 0;
-  ROUNDS.forEach(r => r.categories.forEach(c => t += c.items.length));
-  return t;
-}
-
-function getCheckedCount() {
-  return Object.values(checkedItems).filter(Boolean).length;
-}
-
-function getRoundCounts(ri) {
-  let total = 0, checked = 0;
-  ROUNDS[ri].categories.forEach((c, ci) => {
-    c.items.forEach((_, ii) => {
-      total++;
-      if (checkedItems[getItemId(ri, ci, ii)]) checked++;
-    });
+// Sort items within each store: critical > important > normal > tip
+ROUNDS.forEach(r => {
+  r.stores.forEach(s => {
+    s.items.sort((a, b) => (TAG_ORDER[a.tag] ?? 2) - (TAG_ORDER[b.tag] ?? 2));
   });
-  return { total, checked };
-}
-
-function updateProgress() {
-  const total = getTotalItems();
-  const checked = getCheckedCount();
-  const pct = total ? Math.round((checked / total) * 100) : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressText').textContent = `${checked} / ${total} รายการ`;
-  document.getElementById('progressPct').textContent = pct + '%';
-  document.getElementById('checkedCount').textContent = checked;
-  document.getElementById('totalCount').textContent = total;
-}
-
-function updateRoundProgress() {
-  ROUNDS.forEach((_, ri) => {
-    const { total, checked } = getRoundCounts(ri);
-    const el = document.getElementById(`round-prog-${ri}`);
-    if (el) {
-      el.textContent = `${checked}/${total}`;
-      if (checked === total) {
-        el.classList.add('complete');
-      } else {
-        el.classList.remove('complete');
-      }
-    }
-  });
-}
-
-function updateTabBadges() {
-  ROUNDS.forEach((r, ri) => {
-    const { total, checked } = getRoundCounts(ri);
-    const badge = document.getElementById(`tab-badge-${r.round}`);
-    if (badge) badge.textContent = `${checked}/${total}`;
-  });
-  // All tab
-  const allBadge = document.getElementById('tab-badge-all');
-  if (allBadge) allBadge.textContent = `${getCheckedCount()}/${getTotalItems()}`;
-}
-
-function renderAll() {
-  const container = document.getElementById('content');
-  let html = '';
-
-  ROUNDS.forEach((round, ri) => {
-    html += `<div class="round-section round-${round.round}" data-round="${round.round}">`;
-    html += `<div class="round-header">`;
-    html += `<div class="round-number">${round.round}</div>`;
-    html += `<div class="round-info"><h2>${round.title}</h2><p>${round.subtitle}</p></div>`;
-    const { total, checked } = getRoundCounts(ri);
-    const cls = checked === total ? 'round-progress complete' : 'round-progress';
-    html += `<div class="${cls}" id="round-prog-${ri}">${checked}/${total}</div>`;
-    html += `</div>`;
-    html += `<div class="item-list">`;
-
-    round.categories.forEach((cat, ci) => {
-      html += `<div class="category-label">${cat.label}</div>`;
-      cat.items.forEach((item, ii) => {
-        const id = getItemId(ri, ci, ii);
-        const isChecked = checkedItems[id] ? 'checked' : '';
-        let tagHtml = '';
-        if (item.tag === 'critical') tagHtml = '<span class="item-tag tag-critical">⚡ จำเป็นเร่งด่วน</span>';
-        else if (item.tag === 'important') tagHtml = '<span class="item-tag tag-important">⭐ สำคัญมาก</span>';
-        else if (item.tag === 'tip') tagHtml = '<span class="item-tag tag-tip">💡 แนะนำ</span>';
-
-        html += `<div class="item ${isChecked}" data-id="${id}" onclick="toggleItem('${id}')">`;
-        html += `<div class="checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>`;
-        html += `<div class="item-content">`;
-        html += `<div class="item-top"><span class="item-name">${item.name}</span><span class="item-qty">${item.qty}</span></div>`;
-        html += `<div class="item-reason">${item.reason}</div>`;
-        html += tagHtml;
-        html += `</div></div>`;
-      });
-    });
-
-    html += `</div></div>`;
-  });
-
-  container.innerHTML = html;
-  updateProgress();
-  updateTabBadges();
-}
-
-function filterRound(round) {
-  document.querySelectorAll('.round-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.round-tab[data-round="${round}"]`).classList.add('active');
-  document.querySelectorAll('.round-section').forEach(s => {
-    if (round === 'all' || s.dataset.round === round) {
-      s.classList.remove('hidden');
-    } else {
-      s.classList.add('hidden');
-    }
-  });
-}
-
-function resetAll() {
-  if (confirm('ต้องการรีเซ็ตเช็คลิสต์ทั้งหมด?')) {
-    checkedItems = {};
-    saveState();
-    renderAll();
-  }
-}
-
-// Scroll to top button
-window.addEventListener('scroll', () => {
-  const btn = document.getElementById('scrollTop');
-  if (window.scrollY > 400) {
-    btn.classList.add('visible');
-  } else {
-    btn.classList.remove('visible');
-  }
 });
 
-// Init
-loadState();
-renderAll();
+// ==================== STATE ====================
+let ck = {}, memos = {};
+const SK = 'emg-v4', SM = 'emg-v4-memo';
 
-const now = new Date();
+function load() {
+  try { ck = JSON.parse(localStorage.getItem(SK)) || {}; } catch(e) { ck = {}; }
+  try { memos = JSON.parse(localStorage.getItem(SM)) || {}; } catch(e) { memos = {}; }
+}
+function save() {
+  try { localStorage.setItem(SK, JSON.stringify(ck)); } catch(e) {}
+  try { localStorage.setItem(SM, JSON.stringify(memos)); } catch(e) {}
+}
+
+function kid(ri,si,ii) { return `${ri}.${si}.${ii}`; }
+
+function toggle(key) {
+  ck[key] = !ck[key]; save();
+  const el = document.querySelector(`[data-id="${key}"]`);
+  if (el) el.classList.toggle('checked', !!ck[key]);
+  updateAll();
+}
+
+function toggleMemo(key, e) {
+  e.stopPropagation();
+  const m = document.getElementById('m-'+key);
+  if (m) { m.classList.toggle('open'); if (m.classList.contains('open')) m.querySelector('input').focus(); }
+}
+
+function saveMemo(key, v) {
+  if (v.trim()) memos[key] = v.trim(); else delete memos[key]; save();
+}
+
+// ==================== COUNTS ====================
+function totalItems() {
+  let t = 0; ROUNDS.forEach(r => r.stores.forEach(s => t += s.items.length)); return t;
+}
+function checkedCount() { return Object.values(ck).filter(Boolean).length; }
+function roundCounts(ri) {
+  let t = 0, c = 0;
+  ROUNDS[ri].stores.forEach((s, si) => { s.items.forEach((_, ii) => { t++; if (ck[kid(ri,si,ii)]) c++; }); });
+  return { t, c };
+}
+
+function updateAll() {
+  const tot = totalItems(), chk = checkedCount();
+  const pct = tot ? Math.round(chk/tot*100) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressDetail').textContent = `${chk} / ${tot} รายการ`;
+  document.getElementById('fCount').textContent = chk;
+  document.getElementById('fTotal').textContent = tot;
+  ROUNDS.forEach((_, ri) => {
+    const { t, c } = roundCounts(ri);
+    const el = document.getElementById('rp-'+ri);
+    if (el) { el.textContent = `${c}/${t}`; el.className = c===t ? 'round-badge done' : 'round-badge'; }
+  });
+}
+
+// ==================== RENDER ====================
+function render() {
+  const box = document.getElementById('content');
+  let h = '';
+  ROUNDS.forEach((r, ri) => {
+    const { t, c } = roundCounts(ri);
+    h += `<div class="round-section" data-round="${r.round}">`;
+    h += `<div class="round-header">`;
+    h += `<div class="round-num" style="background:var(--round${r.round})">${r.round}</div>`;
+    h += `<div class="round-info"><h2>${r.title}</h2><p>${r.subtitle}</p></div>`;
+    h += `<div class="${c===t?'round-badge done':'round-badge'}" id="rp-${ri}">${c}/${t}</div>`;
+    h += `</div>`;
+    h += `<div class="round-budget">💰 งบรอบนี้: ${r.budget}</div>`;
+
+    r.stores.forEach((store, si) => {
+      const isLast = si === r.stores.length - 1;
+      h += `<div class="store-group${isLast?' last':''}">`;
+      h += `<div class="store-label">${store.store}</div>`;
+      store.items.forEach((item, ii) => {
+        const key = kid(ri,si,ii);
+        const isChecked = ck[key] ? 'checked' : '';
+        let tag = '';
+        if (item.tag==='critical') tag='<span class="item-tag tag-critical">⚡ จำเป็นเร่งด่วน</span>';
+        else if (item.tag==='important') tag='<span class="item-tag tag-important">⭐ สำคัญมาก</span>';
+        else if (item.tag==='tip') tag='<span class="item-tag tag-tip">💡 แนะนำ</span>';
+        const memo = memos[key]||'';
+        h += `<div class="item ${isChecked}" data-id="${key}" onclick="toggle('${key}')">`;
+        h += `<div class="cb-wrap"><div class="checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>`;
+        h += `<div class="item-body">`;
+        h += `<div class="item-row"><span class="item-name">${item.name}</span><span class="item-qty">${item.qty}</span></div>`;
+        h += `<div class="item-reason">${item.reason}</div>`;
+        h += tag;
+        h += `<span class="item-memo-btn" onclick="toggleMemo('${key}',event)">📝 โน้ต</span>`;
+        h += `<div class="item-memo ${memo?'open':''}" id="m-${key}"><input type="text" placeholder="จดราคา/จำนวนจริง..." value="${memo.replace(/"/g,'&quot;')}" onclick="event.stopPropagation()" oninput="saveMemo('${key}',this.value)"></div>`;
+        h += `</div></div>`;
+      });
+      h += `</div>`;
+    });
+    h += `</div>`;
+  });
+  box.innerHTML = h;
+  updateAll();
+}
+
+// ==================== FILTER ====================
+function filterRound(r) {
+  document.querySelectorAll('.round-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.round-tab[data-round="${r}"]`).classList.add('active');
+  document.querySelectorAll('.round-section').forEach(s => {
+    s.classList.toggle('hidden', r!=='all' && s.dataset.round!==r);
+  });
+}
+
+// ==================== SHARE ====================
+function encodeState() {
+  const keys = [];
+  ROUNDS.forEach((r,ri) => r.stores.forEach((s,si) =>
+    s.items.forEach((_,ii) => { if (ck[kid(ri,si,ii)]) keys.push(kid(ri,si,ii)); })
+  ));
+  return btoa(JSON.stringify(keys));
+}
+function decodeState(hash) {
+  try { JSON.parse(atob(hash)).forEach(k => ck[k]=true); save(); } catch(e) {}
+}
+function shareState() {
+  const url = location.origin+location.pathname+'#'+encodeState();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => showToast('📋 คัดลอกลิงก์แล้ว — ส่ง Line ได้เลย'));
+  } else {
+    const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('📋 คัดลอกลิงก์แล้ว');
+  }
+}
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ==================== RESET ====================
+function resetAll() {
+  if (confirm('ต้องการรีเซ็ตเช็คลิสต์ทั้งหมด?')) { ck={}; memos={}; save(); render(); }
+}
+
+// ==================== INIT ====================
+load();
+if (location.hash.length>1) decodeState(location.hash.slice(1));
+render();
 document.getElementById('dateLabel').textContent =
-  now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+  new Date().toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
 </script>
 </body>
 </html>
