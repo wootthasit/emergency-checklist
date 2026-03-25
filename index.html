@@ -4,357 +4,624 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>เช็คลิสต์เสบียงฉุกเฉิน</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1115;
-    --card: #1a1d24;
-    --card-border: #2a2d35;
-    --text: #e8e6e3;
-    --text-dim: #8a8d93;
-    --accent-red: #e74c3c;
-    --accent-orange: #f39c12;
-    --accent-yellow: #f1c40f;
-    --accent-green: #2ecc71;
-    --accent-blue: #3498db;
-    --accent-purple: #9b59b6;
-    --check-green: #27ae60;
-    --done-bg: #1a2e1a;
-    --round1: #e74c3c;
-    --round2: #e67e22;
-    --round3: #f1c40f;
-    --round4: #2ecc71;
-    --round5: #3498db;
-    --round6: #9b59b6;
+    --bg: #0c0d10;
+    --surface: #151720;
+    --card: #1a1e28;
+    --card-hover: #1f2332;
+    --card-border: #262a36;
+    --text: #eae8e4;
+    --text-secondary: #9498a4;
+    --text-dim: #6b6f7b;
+    --check-green: #22c55e;
+    --done-bg: rgba(34,197,94,0.06);
+    --done-border: rgba(34,197,94,0.15);
+    --round1: #ef4444;
+    --round2: #f97316;
+    --round3: #eab308;
+    --round4: #22c55e;
+    --round5: #3b82f6;
+    --round6: #a855f7;
+    --max-w: 680px;
+    --radius: 16px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Noto Sans Thai', sans-serif;
+    font-family: 'Noto Sans Thai', -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding-bottom: 100px;
+    padding-bottom: 80px;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Header */
+  /* ==================== LAYOUT WRAPPER ==================== */
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  /* ==================== HEADER ==================== */
   .header {
-    background: linear-gradient(135deg, #1a1d24 0%, #2c1810 100%);
-    border-bottom: 2px solid var(--accent-red);
-    padding: 20px 16px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--card-border);
     position: sticky;
     top: 0;
     z-index: 100;
   }
 
-  .header-top {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 8px;
+  .header-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 18px 20px 14px;
   }
 
-  .header h1 {
-    font-size: 20px; font-weight: 800;
-    background: linear-gradient(90deg, #e74c3c, #f39c12);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
   }
 
-  .header-meta {
-    font-size: 12px; color: var(--text-dim);
-    display: flex; gap: 12px; flex-wrap: wrap;
+  .header-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+    flex-shrink: 0;
   }
 
-  .header-meta span { display: flex; align-items: center; gap: 4px; }
+  .header-title h1 {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: #fff;
+  }
 
-  .progress-bar {
-    margin-top: 10px;
-    background: #2a2d35;
-    border-radius: 8px;
-    height: 8px;
+  .header-title p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 1px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+
+  .stat-chip {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .progress-track {
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    height: 6px;
     overflow: hidden;
   }
 
   .progress-fill {
     height: 100%;
-    border-radius: 8px;
-    background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-green));
-    transition: width 0.5s ease;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ef4444, #f97316, #22c55e);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
   }
 
-  .progress-text {
-    font-size: 11px; color: var(--text-dim);
-    margin-top: 4px;
-    text-align: right;
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+    border-radius: 0 6px 6px 0;
   }
 
-  /* Round Navigation */
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .progress-label .pct {
+    color: var(--check-green);
+    font-weight: 700;
+  }
+
+  /* ==================== ROUND NAV ==================== */
+  .round-nav-wrap {
+    background: var(--surface);
+    border-bottom: 1px solid var(--card-border);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+  }
+
   .round-nav {
-    display: flex; gap: 6px;
-    padding: 10px 16px;
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    gap: 6px;
+    padding: 10px 20px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    justify-content: flex-start;
   }
+
   .round-nav::-webkit-scrollbar { display: none; }
+
+  @media (min-width: 720px) {
+    .round-nav { justify-content: center; }
+  }
 
   .round-tab {
     flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: 20px;
+    padding: 7px 16px;
+    border-radius: 99px;
     font-size: 12px;
     font-weight: 600;
     border: 1.5px solid var(--card-border);
-    background: var(--card);
+    background: transparent;
     color: var(--text-dim);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
     white-space: nowrap;
+    position: relative;
+  }
+
+  .round-tab:hover {
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.03);
   }
 
   .round-tab.active {
     color: #fff;
     border-color: transparent;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
   }
 
-  .round-tab[data-round="1"].active { background: var(--round1); }
-  .round-tab[data-round="2"].active { background: var(--round2); }
-  .round-tab[data-round="3"].active { background: var(--round3); }
-  .round-tab[data-round="4"].active { background: var(--round4); }
-  .round-tab[data-round="5"].active { background: var(--round5); }
-  .round-tab[data-round="6"].active { background: var(--round6); }
-  .round-tab[data-round="all"].active { background: linear-gradient(90deg, var(--round1), var(--round6)); }
+  .round-tab[data-round="1"].active { background: var(--round1); box-shadow: 0 2px 12px rgba(239,68,68,0.35); }
+  .round-tab[data-round="2"].active { background: var(--round2); box-shadow: 0 2px 12px rgba(249,115,22,0.35); }
+  .round-tab[data-round="3"].active { background: var(--round3); color: #1a1d24; box-shadow: 0 2px 12px rgba(234,179,8,0.35); }
+  .round-tab[data-round="4"].active { background: var(--round4); box-shadow: 0 2px 12px rgba(34,197,94,0.35); }
+  .round-tab[data-round="5"].active { background: var(--round5); box-shadow: 0 2px 12px rgba(59,130,246,0.35); }
+  .round-tab[data-round="6"].active { background: var(--round6); box-shadow: 0 2px 12px rgba(168,85,247,0.35); }
+  .round-tab[data-round="all"].active { background: linear-gradient(135deg, var(--round1), var(--round5)); }
 
-  .round-tab .tab-count {
-    display: inline-block;
-    margin-left: 4px;
+  .tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 99px;
     background: rgba(255,255,255,0.2);
-    padding: 1px 6px;
-    border-radius: 10px;
     font-size: 10px;
+    font-weight: 700;
+    margin-left: 5px;
+    vertical-align: middle;
   }
 
-  /* Round Section */
+  /* ==================== ALERT ==================== */
+  .alert-box {
+    max-width: var(--max-w);
+    margin: 16px auto 0;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(239,68,68,0.2);
+    background: rgba(239,68,68,0.06);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .alert-box strong {
+    color: #ef4444;
+    font-weight: 700;
+  }
+
+  /* ==================== ROUND SECTION ==================== */
   .round-section {
-    margin: 12px 12px 0;
+    margin-top: 16px;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .round-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 14px 10px;
-    border-radius: 14px 14px 0 0;
-    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px 12px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-bottom: none;
   }
 
   .round-number {
-    width: 36px; height: 36px;
-    border-radius: 10px;
+    width: 40px; height: 40px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 800;
+    font-size: 17px; font-weight: 900;
     color: #fff;
     flex-shrink: 0;
   }
 
-  .round-info h2 { font-size: 15px; font-weight: 700; }
-  .round-info p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .round-info { flex: 1; }
+  .round-info h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+  .round-info p { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 
-  .round-1 .round-header { background: linear-gradient(135deg, rgba(231,76,60,0.15), transparent); }
+  .round-progress {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.05);
+    padding: 4px 10px;
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .round-progress.complete {
+    background: rgba(34,197,94,0.15);
+    color: var(--check-green);
+  }
+
+  .round-1 .round-header { background: linear-gradient(135deg, rgba(239,68,68,0.1), var(--card) 70%); }
   .round-1 .round-number { background: var(--round1); }
-  .round-2 .round-header { background: linear-gradient(135deg, rgba(230,126,34,0.15), transparent); }
+  .round-2 .round-header { background: linear-gradient(135deg, rgba(249,115,22,0.1), var(--card) 70%); }
   .round-2 .round-number { background: var(--round2); }
-  .round-3 .round-header { background: linear-gradient(135deg, rgba(241,196,15,0.12), transparent); }
+  .round-3 .round-header { background: linear-gradient(135deg, rgba(234,179,8,0.08), var(--card) 70%); }
   .round-3 .round-number { background: var(--round3); color: #1a1d24; }
-  .round-4 .round-header { background: linear-gradient(135deg, rgba(46,204,113,0.12), transparent); }
+  .round-4 .round-header { background: linear-gradient(135deg, rgba(34,197,94,0.08), var(--card) 70%); }
   .round-4 .round-number { background: var(--round4); }
-  .round-5 .round-header { background: linear-gradient(135deg, rgba(52,152,219,0.12), transparent); }
+  .round-5 .round-header { background: linear-gradient(135deg, rgba(59,130,246,0.08), var(--card) 70%); }
   .round-5 .round-number { background: var(--round5); }
-  .round-6 .round-header { background: linear-gradient(135deg, rgba(155,89,182,0.12), transparent); }
+  .round-6 .round-header { background: linear-gradient(135deg, rgba(168,85,247,0.08), var(--card) 70%); }
   .round-6 .round-number { background: var(--round6); }
 
-  /* Item Card */
+  /* ==================== ITEM LIST ==================== */
   .item-list {
     background: var(--card);
     border: 1px solid var(--card-border);
     border-top: none;
-    border-radius: 0 0 14px 14px;
+    border-radius: 0 0 var(--radius) var(--radius);
     overflow: hidden;
   }
 
   .category-label {
-    padding: 8px 14px 4px;
-    font-size: 10px;
+    padding: 10px 18px 5px;
+    font-size: 10.5px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     color: var(--text-dim);
-    background: rgba(255,255,255,0.02);
+    border-top: 1px solid rgba(255,255,255,0.04);
   }
 
+  .category-label:first-child { border-top: none; }
+
   .item {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 12px 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 13px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.035);
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }
 
   .item:last-child { border-bottom: none; }
-  .item:active { background: rgba(255,255,255,0.03); }
 
+  @media (hover: hover) {
+    .item:hover {
+      background: var(--card-hover);
+    }
+  }
+
+  .item:active { background: rgba(255,255,255,0.04); }
+
+  /* Checked state */
   .item.checked {
     background: var(--done-bg);
   }
-  .item.checked .item-name { text-decoration: line-through; color: var(--text-dim); }
-  .item.checked .item-qty { color: var(--text-dim); }
 
+  .item.checked .item-name {
+    text-decoration: line-through;
+    text-decoration-color: var(--text-dim);
+    color: var(--text-dim);
+  }
+
+  .item.checked .item-qty { color: var(--text-dim); }
+  .item.checked .item-reason { opacity: 0.4; }
+  .item.checked .item-tag { opacity: 0.4; }
+
+  /* Checkbox */
   .checkbox {
-    width: 24px; height: 24px;
-    border-radius: 7px;
-    border: 2px solid #444;
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    border: 2px solid #3a3e4a;
     flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     margin-top: 1px;
+  }
+
+  @media (hover: hover) {
+    .item:hover .checkbox {
+      border-color: #555;
+    }
   }
 
   .item.checked .checkbox {
     background: var(--check-green);
     border-color: var(--check-green);
+    transform: scale(1);
+    animation: checkPop 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes checkPop {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
   }
 
   .checkbox svg {
     width: 14px; height: 14px;
     stroke: #fff; stroke-width: 3;
-    fill: none;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
     opacity: 0;
     transition: opacity 0.2s;
   }
 
   .item.checked .checkbox svg { opacity: 1; }
 
+  /* Item content */
   .item-content { flex: 1; min-width: 0; }
 
   .item-top {
-    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
   }
 
-  .item-name { font-size: 14px; font-weight: 600; }
+  .item-name {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
   .item-qty {
-    font-size: 13px; font-weight: 700;
-    color: var(--accent-orange);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #f97316;
     white-space: nowrap;
     flex-shrink: 0;
+    background: rgba(249,115,22,0.1);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .item.checked .item-qty {
+    background: rgba(255,255,255,0.04);
   }
 
   .item-reason {
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--text-dim);
     margin-top: 3px;
-    line-height: 1.5;
+    line-height: 1.55;
+    transition: opacity 0.2s;
   }
 
   .item-tag {
     display: inline-block;
-    font-size: 9px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-top: 4px;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    margin-top: 5px;
+    transition: opacity 0.2s;
   }
 
-  .tag-critical { background: rgba(231,76,60,0.2); color: #e74c3c; }
-  .tag-important { background: rgba(243,156,18,0.2); color: #f39c12; }
-  .tag-tip { background: rgba(52,152,219,0.2); color: #3498db; }
+  .tag-critical { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .tag-important { background: rgba(249,115,22,0.15); color: #f97316; }
+  .tag-tip { background: rgba(59,130,246,0.15); color: #3b82f6; }
 
-  /* Summary Footer */
+  /* ==================== FOOTER ==================== */
   .summary-footer {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(15,17,21,0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 1px solid var(--card-border);
-    padding: 10px 16px;
-    display: flex; justify-content: space-between; align-items: center;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
     z-index: 100;
+    background: rgba(12,13,16,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--card-border);
   }
 
-  .summary-left { font-size: 13px; font-weight: 600; }
-  .summary-left span { color: var(--accent-green); }
+  .footer-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-  .reset-btn {
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: 1px solid #444;
+  .footer-left {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .footer-left .count-highlight {
+    color: var(--check-green);
+    font-weight: 800;
+  }
+
+  .footer-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-ghost {
+    padding: 7px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
     background: transparent;
-    color: var(--text-dim);
-    font-size: 11px;
+    color: var(--text-secondary);
+    font-size: 11.5px;
+    font-weight: 600;
     font-family: inherit;
     cursor: pointer;
+    transition: all 0.2s;
   }
 
-  /* Situational Alert */
-  .alert-box {
-    margin: 12px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border-left: 3px solid var(--accent-red);
-    background: rgba(231,76,60,0.08);
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--text-dim);
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
   }
 
-  .alert-box strong { color: var(--accent-red); }
+  /* ==================== RESPONSIVE ==================== */
+  @media (min-width: 720px) {
+    .alert-box { margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }
+    .round-section { }
+    .item { padding: 14px 20px; }
+    .category-label { padding-left: 20px; }
+  }
+
+  @media (max-width: 400px) {
+    .header-inner { padding: 14px 14px 12px; }
+    .round-nav { padding: 8px 14px; }
+    .item { padding: 11px 14px; gap: 10px; }
+    .item-name { font-size: 13px; }
+    .item-qty { font-size: 11.5px; }
+    .category-label { padding-left: 14px; }
+    .round-header { padding: 14px 14px 10px; }
+  }
 
   .hidden { display: none !important; }
 
+  /* Scroll to top */
+  .scroll-top {
+    position: fixed;
+    bottom: 70px;
+    right: 16px;
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text-secondary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 99;
+    font-size: 18px;
+  }
+
+  .scroll-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scroll-top:hover {
+    background: var(--card-hover);
+    border-color: rgba(255,255,255,0.15);
+  }
+
   /* Print */
   @media print {
-    .header { position: static; }
-    .summary-footer, .round-nav, .reset-btn { display: none; }
+    .header, .round-nav-wrap { position: static; }
+    .summary-footer, .scroll-top { display: none; }
     body { background: #fff; color: #000; padding: 0; }
     .round-section { break-inside: avoid; }
     .item-list { border: 1px solid #ddd; }
+    .container { max-width: 100%; }
   }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div class="header-top">
-    <span style="font-size:24px">🛒</span>
-    <h1>เช็คลิสต์เสบียงฉุกเฉิน</h1>
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-icon">🛒</div>
+      <div class="header-title">
+        <h1>เช็คลิสต์เสบียงฉุกเฉิน</h1>
+        <p>4 คน × 30 วัน · 6 รอบช็อปปิ้ง · <span id="dateLabel"></span></p>
+      </div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label">
+      <span id="progressText">0 / 0 รายการ</span>
+      <span class="pct" id="progressPct">0%</span>
+    </div>
   </div>
-  <div class="header-meta">
-    <span>👨‍👩‍👧‍👦 4 คน × 30 วัน</span>
-    <span>📦 6 รอบช็อปปิ้ง</span>
-    <span id="dateLabel"></span>
+</div>
+
+<!-- ROUND NAV -->
+<div class="round-nav-wrap">
+  <div class="round-nav" id="roundNav">
+    <div class="round-tab active" data-round="all" onclick="filterRound('all')">ทั้งหมด</div>
+    <div class="round-tab" data-round="1" onclick="filterRound('1')">🔴 รอบ 1</div>
+    <div class="round-tab" data-round="2" onclick="filterRound('2')">🟠 รอบ 2</div>
+    <div class="round-tab" data-round="3" onclick="filterRound('3')">🟡 รอบ 3</div>
+    <div class="round-tab" data-round="4" onclick="filterRound('4')">🟢 รอบ 4</div>
+    <div class="round-tab" data-round="5" onclick="filterRound('5')">🔵 รอบ 5</div>
+    <div class="round-tab" data-round="6" onclick="filterRound('6')">🟣 รอบ 6</div>
   </div>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-  <div class="progress-text" id="progressText">0 / 0 รายการ</div>
 </div>
 
-<div class="round-nav" id="roundNav">
-  <div class="round-tab active" data-round="all" onclick="filterRound('all')">ทั้งหมด</div>
-  <div class="round-tab" data-round="1" onclick="filterRound('1')">🔴 รอบ 1</div>
-  <div class="round-tab" data-round="2" onclick="filterRound('2')">🟠 รอบ 2</div>
-  <div class="round-tab" data-round="3" onclick="filterRound('3')">🟡 รอบ 3</div>
-  <div class="round-tab" data-round="4" onclick="filterRound('4')">🟢 รอบ 4</div>
-  <div class="round-tab" data-round="5" onclick="filterRound('5')">🔵 รอบ 5</div>
-  <div class="round-tab" data-round="6" onclick="filterRound('6')">🟣 รอบ 6</div>
+<!-- ALERT -->
+<div class="container">
+  <div class="alert-box">
+    <strong>⚠️ สถานการณ์ ณ มี.ค. 2569:</strong> ช่องแคบฮอร์มุซถูกปิดกั้น น้ำมันโลกขึ้น 25%+ · ปั๊มในไทย 10% ปิดบริการ · ราคาสินค้าขึ้น 3-5% แล้ว — <strong>ยิ่งซื้อเร็วยิ่งได้ราคาถูก</strong>
+  </div>
 </div>
 
-<div class="alert-box">
-  <strong>⚠️ สถานการณ์ปัจจุบัน:</strong> ช่องแคบฮอร์มุซถูกปิด น้ำมันโลกขึ้น 25%+ ปั๊มน้ำมันในไทย 10% ปิดบริการ 70% ขาดน้ำมันบางชนิด ราคาสินค้าในไทยขึ้นแล้ว 3-5% — ยิ่งซื้อเร็วยิ่งได้ราคาถูก
-</div>
+<!-- CONTENT -->
+<div class="container" id="content"></div>
 
-<div id="content"></div>
+<!-- SCROLL TOP -->
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
 
+<!-- FOOTER -->
 <div class="summary-footer">
-  <div class="summary-left">✅ <span id="checkedCount">0</span> / <span id="totalCount">0</span> รายการ</div>
-  <button class="reset-btn" onclick="resetAll()">🔄 รีเซ็ต</button>
+  <div class="footer-inner">
+    <div class="footer-left">
+      ✅ <span class="count-highlight" id="checkedCount">0</span> / <span id="totalCount">0</span> รายการ
+    </div>
+    <div class="footer-actions">
+      <button class="btn-ghost" onclick="resetAll()">🔄 รีเซ็ต</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -383,8 +650,8 @@ const ROUNDS = [
       {
         label: "💧 น้ำดื่ม",
         items: [
-          { name: "น้ำดื่มขวด", qty: "4×12 แพ็ค (1.5 ลิตร)", reason: "ถ้าไฟดับ ประปาหยุด — ต้องมีน้ำอย่างน้อย 3 ลิตร/คน/วัน", tag: "critical" },
-          { name: "ถังเก็บน้ำมีฝาปิด", qty: "1 ถัง (200 ลิตร)", reason: "สำรองน้ำอาบ/ซัก เติมน้ำประปาไว้ก่อนขาด", tag: "important" },
+          { name: "น้ำดื่มขวด", qty: "4×12 แพ็ค (1.5L)", reason: "ถ้าไฟดับ ประปาหยุด — ต้องมีน้ำอย่างน้อย 3 ลิตร/คน/วัน", tag: "critical" },
+          { name: "ถังเก็บน้ำมีฝาปิด", qty: "1 ถัง (200L)", reason: "สำรองน้ำอาบ/ซัก เติมน้ำประปาไว้ก่อนขาด", tag: "important" },
         ]
       }
     ]
@@ -413,7 +680,7 @@ const ROUNDS = [
       {
         label: "🥫 อาหารกระป๋อง",
         items: [
-          { name: "ปลากระป๋อง (ซาร์ดีน/แมคเคอเรล)", qty: "20 กระป๋อง", reason: "เปิดทานได้ทันทีไม่ต้องทำ — โปรตีน+ไขมัน", tag: "important" },
+          { name: "ปลากระป๋อง (ซาร์ดีน/แมคเคอเรล)", qty: "20 กระป๋อง", reason: "เปิดทานได้ทันที — โปรตีน+ไขมัน", tag: "important" },
           { name: "เนื้อกระป๋อง / ไก่กระป๋อง", qty: "10 กระป๋อง", reason: "สลับรสชาติเพื่อไม่ให้เบื่อ" },
           { name: "ผลไม้กระป๋อง", qty: "6 กระป๋อง", reason: "วิตามินและน้ำตาลให้พลังงาน" },
         ]
@@ -425,7 +692,7 @@ const ROUNDS = [
           { name: "น้ำตาลทราย", qty: "3 กก.", reason: "ให้พลังงาน + ถนอมอาหาร + ผสมเกลือแร่" },
           { name: "น้ำปลา / ซีอิ๊ว", qty: "3 ขวด", reason: "รสชาติหลักของอาหารไทย" },
           { name: "ผงชูรส", qty: "2 ถุง", reason: "ทำอาหารจืดให้กินได้ — สำคัญทางจิตใจ" },
-          { name: "น้ำมันพืช", qty: "3 ขวด (1 ลิตร)", reason: "ไขมันจำเป็นต่อร่างกาย + ใช้ทอด/ผัด ในภาวะขาดแคลนจะหายากมาก", tag: "important" },
+          { name: "น้ำมันพืช", qty: "3 ขวด (1L)", reason: "ไขมันจำเป็นต่อร่างกาย + ใช้ทอด/ผัด ภาวะขาดแคลนจะหายากมาก", tag: "important" },
         ]
       }
     ]
@@ -447,12 +714,12 @@ const ROUNDS = [
         label: "🔥 พลังงานสำรอง",
         items: [
           { name: "เตาถ่าน + ถ่านไม้", qty: "1 เตา + 20 กก.", reason: "แก๊สกระป๋องหมดเร็ว ถ่านคือพลังงานหลักถ้าวิกฤตยาว", tag: "important" },
-          { name: "แก๊สกระป๋อง (เพิ่ม)", qty: "12 กระป๋อง", reason: "เติมสต็อกให้รวมเป็น 18 กระป๋อง ≈ 36-54 ชม.ใช้งาน" },
+          { name: "แก๊สกระป๋อง (เพิ่ม)", qty: "12 กระป๋อง", reason: "เติมสต็อกให้รวมเป็น 18 กระป๋อง ≈ 36-54 ชม." },
           { name: "ไฟแช็ก / ไม้ขีดไฟ", qty: "10 อัน / 5 กล่อง", reason: "จุดไฟได้คือทุกอย่าง กระจายเก็บหลายจุด" },
         ]
       },
       {
-        label: "🌶️ เครื่องเทศ/สมุนไพร",
+        label: "🌶️ เครื่องเทศ / สมุนไพร",
         items: [
           { name: "พริกแห้ง", qty: "500 กรัม", reason: "เพิ่มรสชาติ + สรรพคุณช่วยย่อย" },
           { name: "กระเทียม", qty: "1 กก.", reason: "ปรุงรส + ฆ่าเชื้อ + เก็บได้นานในที่แห้ง" },
@@ -501,16 +768,16 @@ const ROUNDS = [
       {
         label: "🏥 ชุดปฐมพยาบาล",
         items: [
-          { name: "พลาสเตอร์ปิดแผล + ผ้าก๊อซ + เทปพันแผล", qty: "1 ชุด", reason: "อุบัติเหตุเล็กๆ ที่ไม่อยากไปโรงพยาบาล" },
+          { name: "พลาสเตอร์ + ผ้าก๊อซ + เทปพันแผล", qty: "1 ชุด", reason: "อุบัติเหตุเล็กๆ ที่ไม่อยากไปโรงพยาบาล" },
           { name: "ยาแก้ปวด/ลดไข้ (พาราเซตามอล)", qty: "100 เม็ด", reason: "ยาพื้นฐานที่ใช้บ่อยที่สุด" },
-          { name: "วิตามินรวม", qty: "120 เม็ด (1 เดือน × 4 คน)", reason: "ชดเชยสารอาหารที่ขาดจากอาหารแห้ง" },
+          { name: "วิตามินรวม", qty: "120 เม็ด", reason: "ชดเชยสารอาหารที่ขาดจากอาหารแห้ง (1 เดือน × 4 คน)" },
           { name: "ยาทาแผลเบตาดีน", qty: "2 ขวด", reason: "ฆ่าเชื้อแผลเปิด" },
         ]
       },
       {
         label: "🪣 จัดการของเสีย",
         items: [
-          { name: "ถุงขยะสีดำหนา", qty: "3 แพ็ค", reason: "จัดการของเสียให้เป็นระเบียบ ป้องกันหนู/แมลง" },
+          { name: "ถุงขยะสีดำหนา", qty: "3 แพ็ค", reason: "จัดการของเสียเป็นระเบียบ ป้องกันหนู/แมลง" },
           { name: "ปูนขาว", qty: "5 กก.", reason: "โรยฆ่าเชื้อ + ดับกลิ่น ในห้องน้ำ/ถังขยะ" },
           { name: "สารส้ม", qty: "1 กก.", reason: "ทำน้ำสะอาดจากน้ำขุ่น (ตกตะกอน)" },
         ]
@@ -533,8 +800,8 @@ const ROUNDS = [
       {
         label: "📄 เอกสารสำคัญ",
         items: [
-          { name: "สำเนาบัตรประชาชน/ทะเบียนบ้าน", qty: "อย่างละ 5 ชุด", reason: "พิสูจน์ตัวตนเพื่อรับสิทธิ์ช่วยเหลือ ใส่ซองกันน้ำ", tag: "important" },
-          { name: "สมุดบัญชี/เอกสารการเงิน (สำเนา)", qty: "1 ชุด", reason: "สำรองไว้กรณี digital ใช้ไม่ได้" },
+          { name: "สำเนาบัตรประชาชน / ทะเบียนบ้าน", qty: "อย่างละ 5 ชุด", reason: "พิสูจน์ตัวตนเพื่อรับสิทธิ์ช่วยเหลือ ใส่ซองกันน้ำ", tag: "important" },
+          { name: "สมุดบัญชี / เอกสารการเงิน (สำเนา)", qty: "1 ชุด", reason: "สำรองไว้กรณี digital ใช้ไม่ได้" },
         ]
       },
       {
@@ -548,9 +815,9 @@ const ROUNDS = [
   }
 ];
 
-// State
+// ==================== STATE ====================
 let checkedItems = {};
-const STORAGE_KEY = 'emergency-checklist-v1';
+const STORAGE_KEY = 'emergency-checklist-v2';
 
 function loadState() {
   try {
@@ -565,35 +832,43 @@ function saveState() {
   } catch(e) {}
 }
 
-function getItemId(roundIdx, catIdx, itemIdx) {
-  return `r${roundIdx}-c${catIdx}-i${itemIdx}`;
-}
+function getItemId(ri, ci, ii) { return `r${ri}-c${ci}-i${ii}`; }
 
 function toggleItem(id) {
   checkedItems[id] = !checkedItems[id];
   saveState();
-  renderItem(id);
-  updateProgress();
-}
-
-function renderItem(id) {
   const el = document.querySelector(`[data-id="${id}"]`);
-  if (!el) return;
-  if (checkedItems[id]) {
-    el.classList.add('checked');
-  } else {
-    el.classList.remove('checked');
+  if (el) {
+    if (checkedItems[id]) {
+      el.classList.add('checked');
+    } else {
+      el.classList.remove('checked');
+    }
   }
+  updateProgress();
+  updateRoundProgress();
+  updateTabBadges();
 }
 
 function getTotalItems() {
-  let total = 0;
-  ROUNDS.forEach(r => r.categories.forEach(c => total += c.items.length));
-  return total;
+  let t = 0;
+  ROUNDS.forEach(r => r.categories.forEach(c => t += c.items.length));
+  return t;
 }
 
 function getCheckedCount() {
   return Object.values(checkedItems).filter(Boolean).length;
+}
+
+function getRoundCounts(ri) {
+  let total = 0, checked = 0;
+  ROUNDS[ri].categories.forEach((c, ci) => {
+    c.items.forEach((_, ii) => {
+      total++;
+      if (checkedItems[getItemId(ri, ci, ii)]) checked++;
+    });
+  });
+  return { total, checked };
 }
 
 function updateProgress() {
@@ -601,9 +876,36 @@ function updateProgress() {
   const checked = getCheckedCount();
   const pct = total ? Math.round((checked / total) * 100) : 0;
   document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressText').textContent = `${checked} / ${total} รายการ (${pct}%)`;
+  document.getElementById('progressText').textContent = `${checked} / ${total} รายการ`;
+  document.getElementById('progressPct').textContent = pct + '%';
   document.getElementById('checkedCount').textContent = checked;
   document.getElementById('totalCount').textContent = total;
+}
+
+function updateRoundProgress() {
+  ROUNDS.forEach((_, ri) => {
+    const { total, checked } = getRoundCounts(ri);
+    const el = document.getElementById(`round-prog-${ri}`);
+    if (el) {
+      el.textContent = `${checked}/${total}`;
+      if (checked === total) {
+        el.classList.add('complete');
+      } else {
+        el.classList.remove('complete');
+      }
+    }
+  });
+}
+
+function updateTabBadges() {
+  ROUNDS.forEach((r, ri) => {
+    const { total, checked } = getRoundCounts(ri);
+    const badge = document.getElementById(`tab-badge-${r.round}`);
+    if (badge) badge.textContent = `${checked}/${total}`;
+  });
+  // All tab
+  const allBadge = document.getElementById('tab-badge-all');
+  if (allBadge) allBadge.textContent = `${getCheckedCount()}/${getTotalItems()}`;
 }
 
 function renderAll() {
@@ -615,6 +917,9 @@ function renderAll() {
     html += `<div class="round-header">`;
     html += `<div class="round-number">${round.round}</div>`;
     html += `<div class="round-info"><h2>${round.title}</h2><p>${round.subtitle}</p></div>`;
+    const { total, checked } = getRoundCounts(ri);
+    const cls = checked === total ? 'round-progress complete' : 'round-progress';
+    html += `<div class="${cls}" id="round-prog-${ri}">${checked}/${total}</div>`;
     html += `</div>`;
     html += `<div class="item-list">`;
 
@@ -643,12 +948,12 @@ function renderAll() {
 
   container.innerHTML = html;
   updateProgress();
+  updateTabBadges();
 }
 
 function filterRound(round) {
   document.querySelectorAll('.round-tab').forEach(t => t.classList.remove('active'));
   document.querySelector(`.round-tab[data-round="${round}"]`).classList.add('active');
-
   document.querySelectorAll('.round-section').forEach(s => {
     if (round === 'all' || s.dataset.round === round) {
       s.classList.remove('hidden');
@@ -666,13 +971,23 @@ function resetAll() {
   }
 }
 
+// Scroll to top button
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scrollTop');
+  if (window.scrollY > 400) {
+    btn.classList.add('visible');
+  } else {
+    btn.classList.remove('visible');
+  }
+});
+
 // Init
 loadState();
 renderAll();
 
 const now = new Date();
 document.getElementById('dateLabel').textContent =
-  '📅 ' + now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+  now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
 </script>
 </body>
 </html>
